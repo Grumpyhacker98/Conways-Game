@@ -4,10 +4,7 @@ var timerVar;
 
 var editArr = [];
 
-var mapSize = {
-    lat: 20,
-    long: 20,
-}
+var mapSize = 20
 
 var clickSound = new sound("./sound/click.mp3")
 
@@ -38,20 +35,25 @@ function clickCell(cell) {
 }
 
 function startGrid() {
-    // create grid
+    mapSize = $("#mapSize").val()
+
     grid.innerHTML = "";
     clearInterval(timerVar)
-    for (var i = 0; i < mapSize.lat; i++) {
+    // create grid
+    for (var i = 0; i < mapSize; i++) {
         row = grid.insertRow(i);
-        for (var j = 0; j < mapSize.long; j++) {
+        for (var j = 0; j < mapSize; j++) {
             cell = row.insertCell(j);
             cell.onclick = function () { clickCell(this) };
             cell.setAttribute("alive", false);
-            // cell.setAttribute("row", i)
-            // cell.setAttribute("cell", j)
             cell.classList.add("box", "border");
         }
     }
+
+    // timerVar = setInterval(gameLifeCycle, 1000);
+
+    // create some example lifeforms
+
     // static lifeform
     grid.rows[1].cells[2].classList.add("purple")
     grid.rows[1].cells[2].setAttribute("alive", true)
@@ -74,16 +76,14 @@ function startGrid() {
 
     grid.rows[2].cells[8].classList.add("purple")
     grid.rows[2].cells[8].setAttribute("alive", true)
-
-    timerVar = setInterval(gameLifeCycle, 1000);
 }
 
 function gameLifeCycle() {
     clickSound.play()
     editArr = [];
 
-    for (var i = 0; i < mapSize.lat; i++) {
-        for (var j = 0; j < mapSize.long; j++) {
+    for (var i = 0; i < mapSize; i++) {
+        for (var j = 0; j < mapSize; j++) {
             cellLifeCheck(i, j)
         }
     }
@@ -182,4 +182,8 @@ $("#unpause").on("click", function () {
 
 $("#pause").on("click", function () {
     clearInterval(timerVar)
+})
+
+$("#test").on("click", function () {
+    console.log($("#mapLength").val())
 })
