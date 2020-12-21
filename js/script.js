@@ -1,19 +1,55 @@
 var grid = document.getElementById("gameGrid");
 
+var timerVar;
+
 var editArr = [];
+
+var mapSize = {
+    lat: 20,
+    long: 20,
+}
+
+var clickSound = new sound("./sound/click.mp3")
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function () {
+        this.sound.play();
+    }
+    this.stop = function () {
+        this.sound.pause();
+    }
+}
+
+
+function clickCell(cell) {
+    if (cell.getAttribute("alive") === "true") {
+        cell.setAttribute("alive", false)
+        cell.classList.remove("purple")
+    } else {
+        cell.setAttribute("alive", true)
+        cell.classList.add("purple")
+    }
+}
 
 function startGrid() {
     // create grid
     grid.innerHTML = "";
-    for (var i = 0; i < 15; i++) {
+    clearInterval(timerVar)
+    for (var i = 0; i < mapSize.lat; i++) {
         row = grid.insertRow(i);
-        for (var j = 0; j < 15; j++) {
+        for (var j = 0; j < mapSize.long; j++) {
             cell = row.insertCell(j);
-            // cell.onclick = function () { clickCell(this) };
-            cell.setAttribute("alive", false)
+            cell.onclick = function () { clickCell(this) };
+            cell.setAttribute("alive", false);
             // cell.setAttribute("row", i)
             // cell.setAttribute("cell", j)
-            cell.classList.add("box", "border", "text-center")
+            cell.classList.add("box", "border");
         }
     }
     // static lifeform
@@ -40,17 +76,22 @@ function startGrid() {
     grid.rows[2].cells[8].classList.add("purple")
     grid.rows[2].cells[8].setAttribute("alive", true)
 
+    timerVar = setInterval(gameTime, 1000);
+}
+
+function gameTime() {
+    clickSound.play()
+    gameLifeCycle()
 }
 
 function gameLifeCycle() {
     editArr = [];
 
-    for (var i = 0; i < 15; i++) {
-        for (var j = 0; j < 15; j++) {
+    for (var i = 0; i < mapSize.lat; i++) {
+        for (var j = 0; j < mapSize.long; j++) {
             cellLifeCheck(i, j)
         }
     }
-    console.log(editArr)
 
     gridEdit(editArr)
 }
@@ -123,18 +164,6 @@ function callAdjacent(lat, long) {
 function gridEdit(arr) {
     for (i in arr) {
         cell = grid.rows[arr[i].lat].cells[arr[i].long]
-
-        // if (cell.getAttribute("alive") === "true" && arr[i].alive) {
-
-        // } else if (cell.getAttribute("alive") === "true" && !arr[i].alive) {
-        //     cell.setAttribute("alive", false)
-        //     cell.classList.remove("purple")
-        // } else if (cell.getAttribute("alive") === "false" && arr[i].alive) {
-        //     cell.setAttribute("alive", true)
-        //     cell.classList.add("purple")
-        // } else if (cell.getAttribute("alive") === "false" && !arr[i].alive) {
-
-        // }
 
         if (!arr[i].alive) {
             cell.setAttribute("alive", false)
