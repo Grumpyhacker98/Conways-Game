@@ -65,7 +65,6 @@ function startGrid() {
     grid.rows[3].cells[2].classList.add("purple")
     grid.rows[3].cells[2].setAttribute("alive", true)
 
-
     // occilating lifeform
     grid.rows[2].cells[9].classList.add("purple")
     grid.rows[2].cells[9].setAttribute("alive", true)
@@ -76,15 +75,11 @@ function startGrid() {
     grid.rows[2].cells[8].classList.add("purple")
     grid.rows[2].cells[8].setAttribute("alive", true)
 
-    timerVar = setInterval(gameTime, 1000);
-}
-
-function gameTime() {
-    clickSound.play()
-    gameLifeCycle()
+    timerVar = setInterval(gameLifeCycle, 1000);
 }
 
 function gameLifeCycle() {
+    clickSound.play()
     editArr = [];
 
     for (var i = 0; i < mapSize.lat; i++) {
@@ -180,6 +175,11 @@ $("#start").on("click", function () {
     startGrid()
 })
 
-$("#test").on("click", function () {
-    gameLifeCycle()
+$("#unpause").on("click", function () {
+    clearInterval(timerVar)
+    timerVar = setInterval(gameLifeCycle, 1000);
+})
+
+$("#pause").on("click", function () {
+    clearInterval(timerVar)
 })
