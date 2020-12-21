@@ -17,17 +17,17 @@ function startGrid() {
         }
     }
     // static lifeform
-    // grid.rows[1].cells[2].classList.add("purple")
-    // grid.rows[1].cells[2].setAttribute("alive", true)
+    grid.rows[1].cells[2].classList.add("purple")
+    grid.rows[1].cells[2].setAttribute("alive", true)
 
-    // grid.rows[2].cells[1].classList.add("purple")
-    // grid.rows[2].cells[1].setAttribute("alive", true)
+    grid.rows[2].cells[1].classList.add("purple")
+    grid.rows[2].cells[1].setAttribute("alive", true)
 
-    // grid.rows[2].cells[3].classList.add("purple")
-    // grid.rows[2].cells[3].setAttribute("alive", true)
+    grid.rows[2].cells[3].classList.add("purple")
+    grid.rows[2].cells[3].setAttribute("alive", true)
 
-    // grid.rows[3].cells[2].classList.add("purple")
-    // grid.rows[3].cells[2].setAttribute("alive", true)
+    grid.rows[3].cells[2].classList.add("purple")
+    grid.rows[3].cells[2].setAttribute("alive", true)
 
 
     // occilating lifeform
@@ -64,8 +64,7 @@ function cellLifeCheck(lat, long) {
     adjacentLife += callAdjacent(lat - 1, long)
     adjacentLife += callAdjacent(lat - 1, long - 1)
     adjacentLife += callAdjacent(lat, long + 1)
-    adjacentLife += callAdjacent(lat, long + 1)
-
+    adjacentLife += callAdjacent(lat, long - 1)
 
     let cellAlive
     if (grid.rows[lat].cells[long].getAttribute('alive') === 'true') {
@@ -76,19 +75,15 @@ function cellLifeCheck(lat, long) {
 
     if (!cellAlive && adjacentLife === 3) {
         // Births: Each dead cell adjacent to exactly three live neighbors will become live in the next generation.
-        // console.log(lat, long, "will be born")
-        // console.log(cellAlive)
-        // console.log(adjacentLife)    
+        console.log(lat, long, "has been born")
         editArr.push({
             lat: lat,
             long: long,
             alive: true,
         })
-    } else if (cellAlive && adjacentLife >= 1) {
+    } else if (cellAlive && adjacentLife <= 1) {
         // Death by isolation: Each live cell with one or fewer live neighbors will die in the next generation.
-        // console.log(lat, long, "will die alone")
-        // console.log(cellAlive)
-        // console.log(adjacentLife)    
+        console.log(lat, long, "has died alone")
         editArr.push({
             lat: lat,
             long: long,
@@ -96,21 +91,15 @@ function cellLifeCheck(lat, long) {
         })
     } else if (cellAlive && adjacentLife <= 3 && adjacentLife >= 2) {
         // Survival: Each live cell with either two or three live neighbors will remain alive for the next generation.
-        // console.log(lat, long, "will remain alive")
-        // console.log(cellAlive)
-        // console.log(adjacentLife)
-    
-        editArr.push({
-            lat: lat,
-            long: long,
-            alive: true,
-        })
+        console.log(lat, long, "has survived")
+        // editArr.push({
+        //     lat: lat,
+        //     long: long,
+        //     alive: true,
+        // })
     } else if (cellAlive && adjacentLife > 3) {
         // Death by overcrowding: Each live cell with four or more live neighbors will die in the next generation
-        // console.log(lat, long, "will die crowded")
-        // console.log(cellAlive)
-        // console.log(adjacentLife)
-    
+        console.log(lat, long, "has died overcrowded")
         editArr.push({
             lat: lat,
             long: long,
