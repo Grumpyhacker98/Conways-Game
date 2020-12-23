@@ -1,12 +1,14 @@
 var grid = document.getElementById("gameGrid");
+document.getElementById("gameTime").onchange = function () { changeTime() };
 
 var timerVar;
 
 var editArr = [];
 
-var mapSize = $("#gameSize").val()
+var gameSize = $("#gameSize").val();
+var gameTime = $("#gameTime").val();
 
-var clickSound = new sound("./sound/click.mp3")
+var clickSound = new sound("./sound/click.mp3");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -21,6 +23,21 @@ function sound(src) {
     this.stop = function () {
         this.sound.pause();
     }
+};
+
+function startTime() {
+    clearInterval(timerVar)
+    let time = parseFloat(gameTime) * 1000;
+    timerVar = setInterval(gameLifeCycle, time);
+}
+
+function stopTime() {
+    clearInterval(timerVar)
+}
+
+function changeTime() {
+    gameTime = $("#gameTime").val()
+    startTime()
 }
 
 // click functions
@@ -29,13 +46,11 @@ $("#start").on("click", function () {
 })
 
 $("#unpause").on("click", function () {
-    clearInterval(timerVar)
-    let time = parseFloat($("#gameTime").val()) * 1000;
-    timerVar = setInterval(gameLifeCycle, time);
+    startTime(timerVar)
 })
 
 $("#pause").on("click", function () {
-    clearInterval(timerVar)
+    stopTime(timerVar)
 })
 
 $("#test").on("click", function () {
@@ -43,6 +58,8 @@ $("#test").on("click", function () {
 })
 
 function clickCell(cell) {
+    let lat = cell.getAttribute("row")
+    let long = cell.getAttribute("cell")
     if (cell.getAttribute("alive") === "true") {
         cell.setAttribute("alive", false)
         cell.classList.remove("purple")
@@ -52,30 +69,29 @@ function clickCell(cell) {
     }
 }
 
-
+// game logic (as sequentially as possible)
 function startGrid() {
-    mapSize = $("#gameSize").val()
-
+    gameSize = $("#gameSize").val()
     grid.innerHTML = "";
-    clearInterval(timerVar)
     // create grid
-    for (var i = 0; i < mapSize; i++) {
+    for (var i = 0; i < gameSize; i++) {
         row = grid.insertRow(i);
-        for (var j = 0; j < mapSize; j++) {
+        for (var j = 0; j < gameSize; j++) {
             cell = row.insertCell(j);
             cell.onclick = function () { clickCell(this) };
             cell.setAttribute("alive", false);
+            cell.setAttribute("row", i);
+            cell.setAttribute("cell", j);
             cell.classList.add("box", "border");
         }
     }
 
-    let time = parseFloat($("#gameTime").val()) * 1000;
-    timerVar = setInterval(gameLifeCycle, time);
+    startTime(timerVar);
 
     // some examples
 
     // static lifeform
-    if (mapSize >= 6) {
+    if (gameSize >= 6) {
         grid.rows[1].cells[2].classList.add("purple")
         grid.rows[1].cells[2].setAttribute("alive", true)
 
@@ -91,7 +107,7 @@ function startGrid() {
     }
 
     // occilating lifeform
-    if (mapSize >= 20) {
+    if (gameSize >= 20) {
         grid.rows[2].cells[9].classList.add("purple")
         grid.rows[2].cells[9].setAttribute("alive", true)
 
@@ -104,7 +120,7 @@ function startGrid() {
     }
 
     // gosper glider gun
-    if (mapSize >= 40) {
+    if (gameSize >= 40) {
         // left box
         grid.rows[10].cells[1].classList.add("purple")
         grid.rows[10].cells[1].setAttribute("alive", true)
@@ -186,11 +202,13 @@ function startGrid() {
 }
 
 function gameLifeCycle() {
+    console.log(gameTime, $("#gameTime").val())
+
     clickSound.play()
     editArr = [];
 
-    for (var i = 0; i < mapSize; i++) {
-        for (var j = 0; j < mapSize; j++) {
+    for (var i = 0; i < gameSize; i++) {
+        for (var j = 0; j < gameSize; j++) {
             cellLifeCheck(i, j)
         }
     }
@@ -243,7 +261,7 @@ function cellLifeCheck(lat, long) {
 }
 
 function callAdjacent(lat, long) {
-    if (lat > mapSize - 1 || lat < 0 || long > mapSize - 1 || long < 0) return 0;
+    if (lat > gameSize - 1 || lat < 0 || long > gameSize - 1 || long < 0) return 0;
     cell = grid.rows[lat].cells[long]
 
     if (cell.getAttribute("alive") === "true") {
