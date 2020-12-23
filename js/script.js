@@ -5,6 +5,8 @@ var timerVar;
 
 var editArr = [];
 
+var clickData = false;
+
 var gameSize = $("#gameSize").val();
 var gameTime = $("#gameTime").val();
 
@@ -53,23 +55,33 @@ $("#pause").on("click", function () {
     stopTime(timerVar)
 })
 
+$("#constructs").on("click", function () {
+    console.log(clickData)
+    clickData = constructs.static.box
+    console.log(clickData)
+})
+
 $("#test").on("click", function () {
     // console.log($("#mapLength").val())
 })
 
 function clickCell(cell) {
-    let lat = cell.getAttribute("row")
-    let long = cell.getAttribute("cell")
-    if (cell.getAttribute("alive") === "true") {
-        cell.setAttribute("alive", false)
-        cell.classList.remove("purple")
+    if (!clickData) {
+        if (cell.getAttribute("alive") === "true") {
+            cell.setAttribute("alive", false);
+            cell.classList.remove("purple");
+        } else {
+            cell.setAttribute("alive", true);
+            cell.classList.add("purple");
+        }
     } else {
-        cell.setAttribute("alive", true)
-        cell.classList.add("purple")
+        let lat = cell.getAttribute("row");
+        let long = cell.getAttribute("cell");
+        buildConstruct(lat, long);
     }
 }
 
-// game logic (as sequentially as possible)
+// game logic functions (as sequentially as possible)
 function startGrid() {
     gameSize = $("#gameSize").val()
     grid.innerHTML = "";
@@ -282,6 +294,41 @@ function gridEdit(arr) {
             cell.setAttribute("alive", true)
             cell.classList.add("purple")
         }
+    }
+}
+
+function buildConstruct(lat, long) {
+    console.log(lat, long)
+    for (i in clickData) {
+        console.log(clickData[i])
+        // let cell = grid.rows[construct.lat].cells[construct.long]
+        // console.log(cell)
+    }
+
+}
+
+// data for a print function
+// { lat: , long:  },
+var constructs = {
+    static: {
+        box: [
+            { lat: 0, long: 1 },
+            { lat: 0, long: 0 },
+            { lat: 1, long: 1 },
+            { lat: 1, long: 0 },
+        ],
+        hive: [],
+        loaf: [],
+        boat: [],
+        tub: [],
+    },
+    blink: {
+
+    },
+    gun: {
+
+    },
+    ship: {
 
     }
 }
