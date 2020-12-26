@@ -1,5 +1,6 @@
 var grid = document.getElementById("gameGrid");
 document.getElementById("gameTime").onchange = function () { changeTime() };
+document.getElementById("volume").onchange = function () { changeVolume() };
 
 var timerVar;
 
@@ -25,7 +26,15 @@ function sound(src) {
     this.stop = function () {
         this.sound.pause();
     }
+    this.setVolume = function (volume) {
+        this.sound.volume = volume;
+    }
 };
+
+function changeVolume() {
+    let newVolume = parseFloat($("#volume").val()) * .01;
+    clickSound.setVolume(newVolume)
+}
 
 function startTime() {
     clearInterval(timerVar)
@@ -47,6 +56,7 @@ $("#start").on("click", function () {
     startGrid()
 })
 
+// combine these
 $("#unpause").on("click", function () {
     startTime(timerVar)
 })
@@ -55,10 +65,13 @@ $("#pause").on("click", function () {
     stopTime(timerVar)
 })
 
+// want to expand for lots of options
 $("#constructs").on("click", function () {
-    console.log(clickData)
-    clickData = constructs.static.box
-    console.log(clickData)
+    if (!clickData) {
+        clickData = constructs.static.box;
+    } else {
+        clickData = false;
+    }
 })
 
 $("#test").on("click", function () {
@@ -66,6 +79,7 @@ $("#test").on("click", function () {
 })
 
 function clickCell(cell) {
+    // single cell lives or dies
     if (!clickData) {
         if (cell.getAttribute("alive") === "true") {
             cell.setAttribute("alive", false);
@@ -74,6 +88,7 @@ function clickCell(cell) {
             cell.setAttribute("alive", true);
             cell.classList.add("purple");
         }
+        // create a construct
     } else {
         let lat = cell.getAttribute("row");
         let long = cell.getAttribute("cell");
@@ -214,8 +229,6 @@ function startGrid() {
 }
 
 function gameLifeCycle() {
-    console.log(gameTime, $("#gameTime").val())
-
     clickSound.play()
     editArr = [];
 
@@ -298,17 +311,17 @@ function gridEdit(arr) {
 }
 
 function buildConstruct(lat, long) {
-    console.log(lat, long)
     for (i in clickData) {
-        console.log(clickData[i])
-        // let cell = grid.rows[construct.lat].cells[construct.long]
-        // console.log(cell)
+        let cellLat = parseInt(lat) + clickData[i].lat;
+        let cellLong = parseInt(long) + clickData[i].long;
+        let cell = grid.rows[cellLat].cells[cellLong];
+        cell.setAttribute("alive", true)
+        cell.classList.add("purple")
     }
 
 }
 
 // data for a print function
-// { lat: , long:  },
 var constructs = {
     static: {
         box: [

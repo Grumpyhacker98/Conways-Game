@@ -12,16 +12,21 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
-<body>
+<body class="container-fluid">
 
-    <div class="text-center">
-        <span>Size:<input type="number" id="gameSize" value="40" /></span>
-        <button id="start">Create Game</button>
-        <span>Time(sec):<input type="number" id="gameTime" value="1" /></span>
-        <button id="pause">Pause</button>
-        <button id="unpause">Unpause</button>
-        <button id="constructs">Constructs</button>
-        <button id="test">Test</button>
+    <div class="text-center row">
+        <span class="col">Size:<input type="number" id="gameSize" value="40" step="1" /></span>
+        <button class="col" id="start">Create Game</button>
+        <span class="col">Time(sec):<input type="number" id="gameTime" value="1" step=".1" /></span>
+        <!-- combine these -->
+        <button class="col" id="pause">Pause</button>
+        <button class="col" id="unpause">Unpause</button>
+        <div class="form-group col">
+            <label for="volume">Volume:</label>
+            <input type="range" class="form-control-range" id="volume">
+        </div>
+        <button class="col" id="constructs">Constructs</button>
+        <button class="col" id="test">Test</button>
     </div>
 
     <div class="text-center">
