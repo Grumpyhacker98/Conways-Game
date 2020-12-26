@@ -1,5 +1,5 @@
 var grid = document.getElementById("gameGrid");
-document.getElementById("gameTime").onchange = function () { changeTime() };
+document.getElementById("gameTime").onchange = function () { changeTimeInterval() };
 document.getElementById("volume").onchange = function () { changeVolume() };
 
 var timerVar;
@@ -31,44 +31,20 @@ function sound(src) {
     }
 };
 
-function changeVolume() {
-    let newVolume = parseFloat($("#volume").val()) * .01;
-    clickSound.setVolume(newVolume)
-}
-
-function startTime() {
-    clearInterval(timerVar)
-    let time = parseFloat(gameTime) * 1000;
-    timerVar = setInterval(gameLifeCycle, time);
-}
-
-function stopTime() {
-    clearInterval(timerVar)
-}
-
-function changeTime() {
-    gameTime = $("#gameTime").val()
-    startTime()
-}
 
 // click functions
 $("#start").on("click", function () {
     startGrid()
 })
 
-// combine these
-$("#unpause").on("click", function () {
-    startTime(timerVar)
-})
-
 $("#pause").on("click", function () {
-    stopTime(timerVar)
+    changeTimer()
 })
 
 // want to expand for lots of options
 $("#constructs").on("click", function () {
     if (!clickData) {
-        clickData = constructs.static.box;
+        clickData = constructs.static.tub;
     } else {
         clickData = false;
     }
@@ -96,10 +72,41 @@ function clickCell(cell) {
     }
 }
 
+// sound and volume functions
+function changeVolume() {
+    let newVolume = parseFloat($("#volume").val()) * .01;
+    clickSound.setVolume(newVolume)
+}
+
+function changeTimer() {
+    if (timerVar) {
+        clearInterval(timerVar)
+        timerVar = false;
+        $("#pause").text("Unpause")
+    } else {
+        let time = parseFloat(gameTime) * 1000;
+        timerVar = setInterval(gameLifeCycle, time);
+        $("#pause").text("Pause")
+    }
+}
+
+function changeTimeInterval() {
+    if (timerVar) {
+        clearInterval(timerVar)
+        gameTime = $("#gameTime").val()
+        let time = parseFloat(gameTime) * 1000;
+        timerVar = setInterval(gameLifeCycle, time);
+    } else {
+        gameTime = $("#gameTime").val()
+    }
+}
+
 // game logic functions (as sequentially as possible)
 function startGrid() {
     gameSize = $("#gameSize").val()
     grid.innerHTML = "";
+    clearInterval(timerVar)
+    timerVar = false;
     // create grid
     for (var i = 0; i < gameSize; i++) {
         row = grid.insertRow(i);
@@ -113,7 +120,7 @@ function startGrid() {
         }
     }
 
-    startTime(timerVar);
+    changeTimer()
 
     // some examples
 
@@ -253,11 +260,9 @@ function cellLifeCheck(lat, long) {
     adjacentLife += callAdjacent(lat, long - 1)
 
     let cellAlive
-    if (grid.rows[lat].cells[long].getAttribute('alive') === 'true') {
-        cellAlive = true
-    } else {
-        cellAlive = false
-    }
+    if (grid.rows[lat].cells[long].getAttribute('alive') === 'true') cellAlive = true;
+    else cellAlive = false
+
 
     if (!cellAlive && adjacentLife === 3) {
         // Births: Each dead cell adjacent to exactly three live neighbors will become live in the next generation.
@@ -318,7 +323,6 @@ function buildConstruct(lat, long) {
         cell.setAttribute("alive", true)
         cell.classList.add("purple")
     }
-
 }
 
 // data for a print function
@@ -330,10 +334,36 @@ var constructs = {
             { lat: 1, long: 1 },
             { lat: 1, long: 0 },
         ],
-        hive: [],
-        loaf: [],
-        boat: [],
-        tub: [],
+        hive: [
+            { lat: 0, long: 0 },
+            { lat: 0, long: 1 },
+            { lat: 1, long: -1 },
+            { lat: 1, long: 2 },
+            { lat: 2, long: 0 },
+            { lat: 2, long: 1 },
+        ],
+        loaf: [
+            { lat: 0, long: 0 },
+            { lat: 0, long: 1 },
+            { lat: 1, long: -1 },
+            { lat: 1, long: 2 },
+            { lat: 2, long: 0 },
+            { lat: 2, long: 2 },
+            { lat: 3, long: 1 },
+        ],
+        boat: [
+            { lat: 0, long: 0 },
+            { lat: 0, long: 1 },
+            { lat: 1, long: 0 },
+            { lat: 1, long: 2 },
+            { lat: 2, long: 1 },
+        ],
+        tub: [
+            { lat: 0, long: 1 },
+            { lat: 1, long: 0 },
+            { lat: 1, long: 2 },
+            { lat: 2, long: 1 },
+        ],
     },
     blink: {
 
